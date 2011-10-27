@@ -4,9 +4,10 @@ module BackboneSync
   module Rails
     module Faye
       class Event
-        def initialize(model, event)
+        def initialize(model, event, subchannel=nil)
           @model = model
           @event = event
+          @subchannel = subchannel
         end
 
         def broadcast
@@ -24,7 +25,7 @@ module BackboneSync
         end
 
         def channel
-          subchannel = @model.class.try(:faye_channel) || @model.class.table_name
+          subchannel = @subchannel || @model.class.try(:faye_channel) || @model.class.table_name
           "/sync/#{subchannel}"
         end
 
