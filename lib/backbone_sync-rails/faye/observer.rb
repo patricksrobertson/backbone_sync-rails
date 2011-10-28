@@ -5,35 +5,27 @@ module BackboneSync
     module Faye
       module Observer
         def after_update(model)
-          begin
-            Event.new(model, :update).broadcast
-          rescue *NET_HTTP_EXCEPTIONS => e
-            handle_net_http_exception(e)
-          end
+          Event.new(model, :update, subchannel_override(model)).broadcast
+        rescue *NET_HTTP_EXCEPTIONS => e
+          handle_net_http_exception(e)
         end
 
         def after_create(model)
-          begin
-            Event.new(model, :create).broadcast
-          rescue *NET_HTTP_EXCEPTIONS => e
-            handle_net_http_exception(e)
-          end
+          Event.new(model, :create, subchannel_override(model)).broadcast
+        rescue *NET_HTTP_EXCEPTIONS => e
+          handle_net_http_exception(e)
         end
 
         def after_destroy(model)
-          begin
-            Event.new(model, :destroy).broadcast
-          rescue *NET_HTTP_EXCEPTIONS => e
-            handle_net_http_exception(e)
-          end
+          Event.new(model, :destroy, subchannel_override(model)).broadcast
+        rescue *NET_HTTP_EXCEPTIONS => e
+          handle_net_http_exception(e)
         end
 
         def after_touch(model)
-          begin
-            Event.new(model, :update).broadcast
-          rescue *NET_HTTP_EXCEPTIONS => e
-            handle_net_http_exception(e)
-          end
+          Event.new(model, :update, subchannel_override(model)).broadcast
+        rescue *NET_HTTP_EXCEPTIONS => e
+          handle_net_http_exception(e)
         end
 
         def handle_net_http_exception(exception)
@@ -43,6 +35,10 @@ module BackboneSync
           ::Rails.logger.error(exception.message)
           ::Rails.logger.error(exception.backtrace.join("\n"))
           ::Rails.logger.error("")
+        end
+
+        def subchannel_override(model)
+          model.try(:faye_prefix) || nil
         end
       end
     end
