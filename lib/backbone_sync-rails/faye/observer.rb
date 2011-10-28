@@ -38,7 +38,7 @@ module BackboneSync
         end
 
         def subchannel_override(model)
-          model.try(:faye_prefix) || nil
+          nil
         end
       end
     end
